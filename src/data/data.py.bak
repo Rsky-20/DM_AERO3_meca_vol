@@ -1,0 +1,139 @@
+#!/bin/python3
+# -*- coding: utf8 -*- 
+"""
+@Author : Pierre VAUDRY 
+Release date: 20/11/2022
+
+[Description]
+
+    This project aim to 
+
+
+[Class]
+
+    MainApp() -- main class to make first page and instance all functions
+
+
+[Other variable]:
+
+    Many other constants and variable may be defined;
+    these may be used in calls
+
+"""
+#############################################
+# --------- Import module section --------- #
+############################################
+from math import sqrt, pow, cos, sin 
+
+
+#############################################
+# ---------- Data module section ---------- #
+#############################################
+
+g = 9.81 # Constante de gravité
+mass_max = 3920 # Masse maximale de l’avion avec les réservoirs pleins (kg)
+S = 19.5 # Surface alaire (m²)
+alpha = float() # Angle d’incidence 𝛼 est en degrés
+Cx0 = 0.025
+k = 0.05 
+
+
+def Cz(alpha:float):
+    """Fonction qui retourne le coefficient de portance avec un angle donné
+    Cz = Cz0 + c * alpha
+    Cz = 0.02 + 0.075 * alpha
+    Cz0 => le coefficient de portance à incidence nulle
+    c => le coefficient de 𝑝𝑟𝑜𝑝𝑜𝑟𝑡𝑖𝑜𝑛𝑛𝑎𝑙𝑖𝑡é 
+
+    Args:
+        alpha (float): angle 
+
+    Returns:
+        float: retourne le coefficient de portance pour un angle donné
+    """    
+    return 0.02 + 0.075 * alpha #  Coefficient de portance en fonction de l’incidence
+
+def Cx(Cz:float):
+    """Fonction de la polaire de l'avion
+    Cx = Cx0 + K * Cz**2
+    Cx = 0.025 + 0.05 * Cz**2
+    Cx0 => le coefficient de trainée à incidence nulle
+    k => le coefficient de trainée induite
+
+    Args:
+        Cz (float): coefficient de portance
+
+    Returns:
+        float: la polaire de l'avion
+    """    
+    return 0.025 + 0.05 * Cz**2 #  Polaire de l’avion
+
+Cz_max = 1.52 # Coefficient de portance maximale
+alpha_max = 20 # Configuration lisse pour Cz_max
+Cz_max_TO = 1.93 # Coefficient de portance maximale en configuration T/O
+Cz_max_LAND = 2.2 # Coefficient de portance maximale en configuration LAND
+delta_e = float()
+
+def Cm(alpha:float, delta_e:float):
+    """Fontion permettant de calculer le coefficient de moment de tangage en fonction de alpha 
+    et du braquage de la gouverne de profondeur
+
+    Args:
+        alpha (float): angle de l'avion
+        delta_e (float): angle de la gouverne
+
+    Returns:
+        float: retourne le coefficient de moment de tangage
+    """    
+    return 0.24 - 0.18 * alpha + 0.28 * delta_e # 
+
+F1 = F2 =  6.49 * 10e3 # L’avion est propulsé par deux turboréacteurs. Chacun d’eux peut fournir une poussée maximale au niveau de la mer
+F0 = 12980
+delta_t = float()
+rho = float()
+def F(delta_t:float, rho:float):
+    """Fonction de la poussée
+
+    Args:
+        delta_t (float): position de la manette de gaz de 0 à 1 (0% à 100%)
+        rho (float): masse volumique
+
+    Returns:
+        float: retourne la poussée
+    """    
+    return delta_t * pow((rho / 1.225), 0.6) * F0 # La poussée obtenue varie en fonction de l’altitude et de la position des manettes
+# 𝛿𝑡 est la position des manettes de gaz et 𝜌 la masse volumique de l’air en 𝑘𝑔/𝑚3 à l’altitude donnée
+
+f_cap_c = 1110 # fuel_capacity_cruise_flight | La capacité en carburant destiné au vol en croisière (kg)
+spec_comsum = 0.024 # specific consumption | la consommation spécifiqueau niveau de la mer (𝑘𝑔/(𝑁. ℎ))
+
+# [1] DECOLLAGE
+z_airport = 1900 #ft 
+r = 0.1 # La piste est contaminée par de la neige et le coefficient de frottements
+v_lof_kt = 90 #kt
+v_lof_ms = 46 #m/s
+#f = Cz / Cx # Finesse
+
+# [2] MONTEE
+FL350 = 35000 # FL350 
+v = 88 #m/s
+v_z = 3000 #ft/min
+def Cz_2(m:float, g:float, gamma:float, rho:float, S:float, V:float):
+    """2nd Fonction permettant de calculer le coefficient de portance
+
+    Args:
+        m (float): masse max de l'avion
+        g (float): constante de gravité
+        gamma (float): angle d'incidence
+        rho (float): masse volumique
+        S (float): surface allaire
+        V (float): vitesse
+
+    Returns:
+        float: retourne le coefficient de portance
+    """    
+    return (2 * m *g * cos(gamma))/(rho * S * V)
+
+z_panne = 3000 #ft
+V_enr_kt = 118 #kt
+V_enr_ms = 65 #m/s
