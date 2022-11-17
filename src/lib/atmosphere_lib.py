@@ -6,18 +6,8 @@ Release date: 20/11/2022
 
 [Description]
 
-    This project aim to 
-
-
-[Class]
-
-    MainApp() -- main class to make first page and instance all functions
-
-
-[Other variable]:
-
-    Many other constants and variable may be defined;
-    these may be used in calls
+    Ce module apporte les calcules de base dans l'atmosphere. 
+    Il permet de rendre moins lours en terme de lecture le code python principale.
 
 """
 #############################################
@@ -26,15 +16,17 @@ Release date: 20/11/2022
 
 from math import sqrt, pow
 
+#############################################
+# ----------- Function section ------------ #
+#############################################
 
-
-def temperature(z:float):
+def temperature(z):
     return 288.15 - (6.5 * 10**-3 * z)  
 
-def pressure(z:float):
+def pressure(z):
     return 101325 * pow((1 - 22.557 * 10**-6 * z), 5.226)
 
-def density(P:float,T:float):
+def density(P,T):
     return P/(287.05 * T)
 
 def sound_speed(T:float):

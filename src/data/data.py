@@ -22,7 +22,7 @@ Release date: 20/11/2022
 """
 #############################################
 # --------- Import module section --------- #
-############################################
+#############################################
 from math import sqrt, pow, cos, sin 
 
 
@@ -119,7 +119,7 @@ v_lof_ms = 46 #m/s
 FL350 = 35000 # FL350 
 v = 88 #m/s
 v_z = 3000 #ft/min
-def Cz_2(m:float, g:float, gamma:float, rho:float, S:float, V:float):
+def Cz_2(m:float, g:float, gamma:float, rho:float, S:float, V:float):#
     """2nd Fonction permettant de calculer le coefficient de portance
 
     Args:
@@ -133,7 +133,7 @@ def Cz_2(m:float, g:float, gamma:float, rho:float, S:float, V:float):
     Returns:
         float: retourne le coefficient de portance
     """    
-    return (2 * m *g * cos(gamma))/(rho * S * V)
+    return (2 * m *g * cos(gamma))/(rho * S * V**2) #math.cos(gamma)
 
 z_panne = 3000 #ft
 V_enr_kt = 118 #kt
