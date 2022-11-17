@@ -6,29 +6,25 @@ Release date: 20/11/2022
 
 [Description]
 
-    This project aim to 
+    Ce module a pour but de permettre d'alléger le code principale permettant une meilleur lecture générale 
 
-
-[Class]
-
-    MainApp() -- main class to make first page and instance all functions
-
-
-[Other variable]:
-
-    Many other constants and variable may be defined;
-    these may be used in calls
 
 """
 #############################################
 # --------- Import module section --------- #
 #############################################
 
+import sys
+import pathlib
 import math 
-#import lib.atmosphere_lib as atmo
-#import src.data.data as dt
+import numpy as np
+
+#############################################
+# ----------- Function section ------------ #
+#############################################
 
 # [1] Decollage
+
 def V_stol(m:float, g:float, rho:float, S:float, Cz_max:float):
     """Fonction permettant de calculer les vitesses de décrochage
 
@@ -88,6 +84,7 @@ def flight_distance(m:float, g:float, V2:float, V_lof:float, Fu:float, f:float):
     return ((10.5) + ((V2**2 - V_lof**2) / 2 * g )) / ((Fu / m * g) - (1 / f))
 
 # [2] Decollage
+
 def Tu(rho:float, S:float, V:float, Cx:float, m:float, g:float, gamma:float):
     """Fonction permettant de calculer la poussée utile 
 
@@ -103,7 +100,7 @@ def Tu(rho:float, S:float, V:float, Cx:float, m:float, g:float, gamma:float):
     Returns:
         float: retourne la poussée utile
     """    
-    return ((1/2) * rho * S * V**2 * Cx) + (m * g * math.sin(gamma))
+    return ((1/2) * rho * S * (V**2) * Cx) + (m * g * math.sin(gamma))
 
 def Rx(Tu:float, m:float, g:float, gamma:float):
     """Fonction permettant de calculer la poussée nécessaire
@@ -204,7 +201,7 @@ def Fn(rho:float,S:float,V:float,Cx:float):
     """    
     return (1/2) * rho * S * V**2 * Cx
 
-def V(V:float, Fu:float, m:float, g:float, finesse_max:float):
+def V_z(V:float, Fu:float, m:float, g:float, finesse_max:float):
     """Fonction permettant de calculer la vitesse verticale de
     l'avion
 
@@ -239,8 +236,29 @@ def Cz(V:float, rho:float, S:float, m:float, g:float):
 
 # [3] VOL STABILISE EN CROISIERE
 
-def flight_envelope():
+def Cz_vmax(k, Tu_max, m, g, Cx0):
+    return (1 / 2 * k ) * ((Tu_max / m * g) - math.sqrt((Tu_max / m * g)**2 - 4 * k * Cx0))
+
+def V_max(m:float, g:float, rho:float, S:float, Cz_vmax:float):
+    """Fonction permettant de calculer les vitesses maximum
+
+    Args:
+        m (float): masse
+        g (float): constante gravité
+        rho (float): masse volumique
+        S (float): surface allaire
+        Cz_vmax (float): coefficient de portance
+
+    Returns:
+        float: retourne la valeur de la vitesse STOL
+    """    
+    return math.sqrt((2 * m * g) / (rho * S * Cz_vmax))
+
+if __name__ == '__main__':
     
-    return 
-
-
+    # Run the program
+    #print(atmo.__doc__) # test importation module atmo
+    #print(dt.__doc__) # test importation module dt
+    #flight_envelope()
+    #pass
+    pass
