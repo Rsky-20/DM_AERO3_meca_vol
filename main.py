@@ -168,7 +168,6 @@ def run_2_3():
     print("Taux de montee : ", Taux_montee)
     
 
-
 def run_3_1():
     
     Altitude = np.linspace(0, 13300, 175)
@@ -245,15 +244,12 @@ def run_3_2():
     V1dec = aef.Vdec(dt.mass_max,dt.g,rho0,dt.S,dt.Cz_max) 
     V2dec = aef.Vdec(dt.mass_max,dt.g,rho0,dt.S,dt.Cz_max_TO)
 
-
-    
     nmax, nmin = 2.5, -1
     Vc, Vmax, Vs = 165, aef.V_max(dt.mass_max,dt.g,rho0,dt.S,
                                     aef.Cz_vmax(dt.k, dt.F(1, rho0), 
                                                 dt.mass_max, dt.g, dt.Cx0)), V1dec
 
     Vitesse = np.linspace(0, Vmax, 550)
-    
 
     n_pos, n_neg, n_volets = [], [], []
 
@@ -267,7 +263,6 @@ def run_3_2():
 
         else:
             n_pos.append(2.5)
-
 
         if m2 > -1:
             n_neg.append(-1 / Vs**2 * i**2)
@@ -304,7 +299,8 @@ def run_3_2():
     plt.legend(loc = "upper left")
     plt.savefig("./src/img/graph2.png")
     plt.show()
-        
+    
+    
 def run_3_3(): 
 
     Altitude = np.linspace(0, 13300, 175)
@@ -455,7 +451,7 @@ def run_4_2():
     plt.title("La vitesse de décrochage en fonction de l’inclinaison")
     plt.grid(True)
     plt.legend(loc = "upper left")
-    plt.savefig("./src/img/graph6.png")
+    plt.savefig("./src/img/graph7.png")
     plt.show()
 
 if __name__ == '__main__':
