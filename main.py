@@ -170,82 +170,299 @@ def run_2_3():
 
 
 def run_3_1():
-    def flight_envelope():
-        
-        Altitude = np.linspace(0, 13300, 175)
-        T, P, rho, V_min, V_max = [], [], [], [], []
+    
+    Altitude = np.linspace(0, 13300, 175)
+    T, P, rho, V_min, V_max = [], [], [], [], []
+
+    for i in Altitude:
+        T.append(atmo.temperature(i))
+        P.append(atmo.pressure(i))
 
 
-        for i in Altitude:
-            T.append(atmo.temperature(i))
-            P.append(atmo.pressure(i))
+    for i in range(len(T)):
+        rho.append(atmo.density(P[i], T[i]))
+        V_min.append(aef.V_stol(dt.mass_max,dt.g,rho[i],dt.S,dt.Cz_max))
+        V_max.append(aef.V_max(dt.mass_max,dt.g,rho[i],
+                                dt.S,aef.Cz_vmax(dt.k, dt.F(1, rho[i]),
+                                                dt.mass_max, dt.g, dt.Cx0)))        
+
+    V_min = np.array(V_min)
+
+    graph = plt.subplot(111)
+    graph.plot(V_min, Altitude, label = "Vitesse min", color = "blue")
+    graph.plot(V_max, Altitude, label = "Vitesse max", color = "red")
+
+    x = np.linspace(float(V_min[-1]), V_max[-1], 175)
+    y = []
+    for _ in range(175):
+        y.append(13300)
+
+    graph.plot(x, y, label = "Plafond de sus", color = "black")
+
+    graph.set_xlabel("Vitesse de l'avion (m/s)")
+    graph.set_ylabel("Altitude (m)")
+    graph.set_title("Enveloppe de vol")
+
+    graph.fill_between(V_min, Altitude, where = V_min <= V_min[-1], facecolor = "yellow", label = "Zone de vol")
+    graph.fill_between(x, y, where = (x >= V_min[-1]) & (x <= V_max[0]), facecolor = "yellow")
+    graph.fill_between(V_max, y, where = (x <= V_max[-1]) & (x >= V_max[0]), facecolor = "yellow")
+    graph.fill_between(V_max, y, where = (x <= V_max[-1]) & (x <= V_max[0]), facecolor = "yellow")
+    graph.fill_between(V_max, Altitude, where = (x <= V_max[-1]), facecolor = "white")
+    
+    dot = Ellipse( (V_min[0], 0), width = 5, height = 500, edgecolor = "black")
+    dot.set_facecolor("black")
+    graph.add_patch(dot)
+    graph.text(V_min[0] - 10, -500, f'V = {str(V_min[0])[0:6]}m/s')
+
+    dot = Ellipse( (V_min[-1], 13300), width = 5, height = 500, edgecolor = "black")
+    dot.set_facecolor("black")
+    graph.add_patch(dot)
+    graph.text(V_min[-1] - 30, 13300 - 700, f'V = {str(V_min[-1])[0:6]}m/s')
+
+    dot = Ellipse( (V_max[-1], 13300), width = 5, height = 500, edgecolor = "black")
+    dot.set_facecolor("black")
+    graph.add_patch(dot)
+    graph.text(V_max[-1] + 10, 13300, f'V = {str(V_max[-1])[0:6]}m/s')
+
+    dot = Ellipse( (V_max[0], 0), width = 5, height = 500, edgecolor = "black")
+    dot.set_facecolor("black")
+    graph.add_patch(dot)
+    graph.text(V_max[0] - 10, -500, f'V = {str(V_max[0])[0:6]}m/s')
+
+    graph.grid(True)
+    graph.legend(loc = "upper left")
+    plt.savefig("./src/img/graph1.png")
+    plt.show()
 
 
-        for i in range(len(T)):
-            rho.append(atmo.density(P[i], T[i]))
-
-        for i in range(len(Altitude)):
-            V_min.append((aef.V_stol(dt.mass_max,dt.g,rho[i],dt.S,dt.Cz_max)))
-            V_max.append(aef.V_max(dt.mass_max,dt.g,rho[i],dt.S,aef.Cz_vmax(dt.k, dt.F(1, rho[i]),dt.mass_max, dt.g, dt.Cx0)))
-
-        V_min = np.array(V_min)
-
-        graph = plt.subplot(111)
-        graph.plot(V_min, Altitude, label = "Vitesse min", color = "blue")
-        graph.plot(V_max, Altitude, label = "Vitesse max", color = "red")
-
-        x = np.linspace(V_min[-1], V_max[-1], 175)
-        y = []
-        for _ in range(175):
-            y.append(13300)
-
-        graph.plot(x, y, label = "Plafond de sus", color = "black")
-
-        graph.set_xlabel("Vitesse de l'avion (m/s)")
-        graph.set_ylabel("Altitude (m)")
-        graph.set_title("Question 1 - Enveloppe de vol")
-
-        graph.fill_between(V_min, Altitude, where = V_min <= V_min[-1], facecolor = "yellow", label = "Zone de vol")
-        graph.fill_between(x, y, where = (x >= float(V_min[-1])) & (x <= V_max[0]), facecolor = "yellow")
-        graph.fill_between(V_max, y, where = (V_max >= V_max[0]) & (V_max <= V_max[-1]), facecolor = "yellow")
-        graph.fill_between(V_max, Altitude, where = (V_max >= V_max[0]) & (V_max <= V_max[-1]), facecolor = "white")
-        
-
-        dot = Ellipse( (V_min[0], 0), width = 5, height = 500, edgecolor = "black")
-        dot.set_facecolor("black")
-        graph.add_patch(dot)
-        graph.text(V_min[0] - 10, -500, f'V = {str(V_min[0])[0:6]}m/s')
-
-        dot = Ellipse( (V_min[-1], 13300), width = 5, height = 500, edgecolor = "black")
-        dot.set_facecolor("black")
-        graph.add_patch(dot)
-        graph.text(V_min[-1] - 30, 13300 - 700, f'V = {str(V_min[-1])[0:6]}m/s')
-
-        dot = Ellipse( (V_max[-1], 13300), width = 5, height = 500, edgecolor = "black")
-        dot.set_facecolor("black")
-        graph.add_patch(dot)
-        graph.text(V_max[-1] + 10, 13300, f'V = {str(V_max[-1])[0:6]}m/s')
-
-        dot = Ellipse( (V_max[0], 0), width = 5, height = 500, edgecolor = "black")
-        dot.set_facecolor("black")
-        graph.add_patch(dot)
-        graph.text(V_max[0] - 10, -500, f'V = {str(V_max[0])[0:6]}m/s')
-
-        #print(V_min[0], V_min[-1], V_max[0], V_max[-1])
-
-        graph.grid(True)
-        graph.legend(loc = "upper left")
-        plt.show()
-        
+def run_3_2():
             
-            
-    flight_envelope() 
+    rho0 = atmo.density(atmo.pressure(10000),atmo.temperature(10000))
+    
+    
 
+
+    V1dec = aef.Vdec(dt.mass_max,dt.g,rho0,dt.S,dt.Cz_max) 
+    V2dec = aef.Vdec(dt.mass_max,dt.g,rho0,dt.S,dt.Cz_max_TO)
+
+
+    
+    nmax, nmin = 2.5, -1
+    Vc, Vmax, Vs = 165, aef.V_max(dt.mass_max,dt.g,rho0,dt.S,
+                                    aef.Cz_vmax(dt.k, dt.F(1, rho0), 
+                                                dt.mass_max, dt.g, dt.Cx0)), V1dec
+
+    Vitesse = np.linspace(0, Vmax, 550)
+    
+
+    n_pos, n_neg, n_volets = [], [], []
+
+    for i in Vitesse:
+        m = 1 / Vs**2 * i**2
+        m2 = -1 / Vs**2 * i**2
+        m3 = (1/2) * rho0 * dt.S * i**(2) * dt.Cz_max_TO / (dt.mass_max * dt.g)
+        
+        if m < 2.5:
+            n_pos.append(1 / Vs**2 * i**2)
+
+        else:
+            n_pos.append(2.5)
+
+
+        if m2 > -1:
+            n_neg.append(-1 / Vs**2 * i**2)
+
+        elif i >= Vc:
+            n_neg.append((-1 / (Vmax - Vc) * (Vmax - i)))
+
+        else:
+            n_neg.append(-1)     
+
+        if m3 < 2:
+            n_volets.append((1 / 2) * rho0 * dt.S * i**(2) * dt.Cz_max_TO / (dt.mass_max * dt.g))
+        else :
+            if i < 112 :
+                n_volets.append(2)
+            else :
+                if m < 2.5:
+                    n_volets.append(1 / Vs**2 * i**2)
+                else :
+                    n_volets.append(2.5)     
+
+    n_pos[-1] = 0
+    n_volets[-1] = 0                
+
+    plt.plot(Vitesse, n_neg, color = "blue", label = r"Domaine de vol avec $n<0$")
+    plt.plot(Vitesse, n_volets, color = "black", label = r"Domaine de vol avec volets sortis")
+    plt.plot(Vitesse, n_pos, color = "red", label = r"Domaine de vol avec volets rentrés")
+
+    plt.xlabel("Vitesse (m/s)")
+    plt.ylabel("Facteur de charge")
+    plt.title("Question 2 - Domaine de vol")
+
+    plt.grid(True)
+    plt.legend(loc = "upper left")
+    plt.savefig("./src/img/graph2.png")
+    plt.show()
+        
+def run_3_3(): 
+
+    Altitude = np.linspace(0, 13300, 175)
+
+    T, P, rho, Cz, Cx, F = [], [], [], [], [] ,[]
+
+    for i in Altitude:
+        T.append(atmo.temperature(i))
+        P.append(atmo.pressure(i))
+
+
+    for i in range(len(Altitude)):
+        rho.append(atmo.density(P[i], T[i]))
+
+    for i in range(len(Altitude)):
+        Cz.append(aef.Cz(dt.v_conservee,rho[i], dt.S, dt.mass_max,dt.g))   
+
+    for i in range(len(Altitude)):
+        Cx.append(dt.Cx(Cz[i])) 
+
+    for i in range(len(Altitude)):
+        F.append(aef.Fn(rho[i], dt.S, dt.v_conservee, Cx[i])) 
+
+    plt.plot(Altitude, F, color = "red", label = r"poussée requise ")
+    plt.xlabel("Altitude (m)")
+    plt.ylabel("poussée requise (N) ")
+    plt.title("La poussée requise en fonction de l’altitude afin de conserver v = 165 m/s")
+
+    plt.grid(True)
+    plt.legend(loc = "upper right")
+    plt.savefig("./src/img/graph3.png")
+    plt.show()
+    
+def run_3_4():
+    rho = atmo.density(atmo.pressure(10000),atmo.temperature(10000))
+    Vitesse = np.linspace(1, aef.V_max(dt.mass_max, dt.g, rho, dt.S, 
+                                       aef.Cz_vmax(dt.k, dt.F(1, rho), 
+                                                   dt.mass_max, dt.g, 
+                                                   dt.Cx0)), 550)
+    Cz, Cx, E = [], [], []
+    
+    for v in Vitesse:
+       Cz.append(aef.Cz(v, rho, dt.S, dt.mass_max, dt.g))   
+
+    for v in range(len(Vitesse)):
+        Cx.append(dt.Cx(Cz[v])) 
+
+    for v in range(len(Vitesse)):
+        E.append(aef.endurance(dt.mass_max,dt.g, Cz[v], Cx[v])) 
+    
+    E = np.array(E)
+    E = E / 3600
+
+    plt.plot(Vitesse, E, color = "red", label = r"Endurence à 10000m ")
+    plt.xlabel("Vitesse (m/s)")
+    plt.ylabel("Endurence (heures) ")
+    plt.title("L’endurance en fonction de la vitesse")
+
+    plt.grid(True)
+    plt.legend(loc = "upper right")
+    plt.savefig("./src/img/graph4.png")
+    plt.show()
+    
+def run_3_5():
+    
+    rho = atmo.density(atmo.pressure(10000), atmo.temperature(10000))
+
+    Vitesse = np.linspace(1, aef.V_max(dt.mass_max, dt.g, rho, dt.S, 
+                                       aef.Cz_vmax(dt.k, dt.F(1, rho), 
+                                                   dt.mass_max, dt.g, 
+                                                   dt.Cx0)), 550)
+
+    Cz, Cx, R = [], [], []
+    
+    for v in Vitesse:
+       Cz.append(aef.Cz(v, rho, dt.S, dt.mass_max, dt.g))   
+
+    for v in range(len(Vitesse)):
+        Cx.append(dt.Cx(Cz[v])) 
+
+    for v in range(len(Vitesse)):
+        R.append(aef.radius_action(dt.mass_max, dt.g, dt.S, rho, Cz[v], Cx[v])) 
+    
+    R = np.array(R)
+    R = R / 1000
+
+    plt.plot(Vitesse, R, color = "red", label = r"Rayon d'action à 10000m ")
+    plt.xlabel("Vitesse (m/s)")
+    plt.ylabel("Rayon d'action (Km) ")
+    plt.title("Le Rayon d'action en fonction de la vitesse")
+
+    plt.grid(True)
+    plt.legend(loc = "upper left")
+    plt.savefig("./src/img/graph5.png")
+    plt.show()
+    
+def run_4_1():
+    
+    alt = 1368
+    V = 81
+    rho = atmo.density(atmo.pressure(alt), atmo.temperature(alt))
+
+    inclinaison = np.linspace(0,85,180)
+
+    n, Fvirage = [], []
+
+    for i in inclinaison:
+       n.append(aef.facteur(i))
+    for i in range(len(inclinaison)):
+        Fvirage.append(aef.Fv(n[i], rho, V, dt.Cx(aef.Cz(V, rho, dt.S, dt.mass_max, dt.g)),dt.S))
+
+
+    plt.plot(inclinaison, Fvirage, color = "red", label = r"La poussée requise à 4500ft")
+    plt.xlabel("inclinaison (degrès)")
+    plt.ylabel("Poussée requise (N) ")
+    plt.title("La poussée requise en fonction de l’inclinaison")
+
+    plt.grid(True)
+    plt.legend(loc = "upper left")
+    plt.savefig("./src/img/graph6.png")
+    plt.show() 
+    
+def run_4_2():
+    alt = 1368
+    rho = atmo.density(atmo.pressure(alt), atmo.temperature(alt))
+
+    V1dec = aef.Vdec(dt.mass_max, dt.g, dt.S, rho, dt.Cz_max) 
+    V2dec = aef.Vdec(dt.mass_max, dt.g, dt.S, rho,dt.Cz_max_TO)
+    V3dec = aef.Vdec(dt.mass_max, dt.g, dt.S, rho,dt.Cz_max_LAND)
+    
+    inclinaison = np.linspace(0,85,180)    
+
+    n, V1, V2, V3 = [], [], [], []
+    for i in inclinaison:
+       n.append(aef.facteur(i))
+
+    for i in range(len(inclinaison)):
+        V1.append(aef.Vn(n[i],V1dec))  
+        V2.append(aef.Vn(n[i],V2dec))
+        V3.append(aef.Vn(n[i],V3dec)) 
+
+    
+    plt.plot(inclinaison, V1, color = "red", label = r"vitesse de décrochage en configuration lisse ")
+    plt.plot(inclinaison, V2, color = "blue", label = r"vitesse de décrochage en configuration T/O")
+    plt.plot(inclinaison, V3, color = "black", label = r"vitesse de décrochage en configuration LAND")
+    plt.xlabel("inclinaison (degrès)")
+    plt.ylabel("La vitesse de décrochage (m/s) ")    
+    plt.title("La vitesse de décrochage en fonction de l’inclinaison")
+    plt.grid(True)
+    plt.legend(loc = "upper left")
+    plt.savefig("./src/img/graph6.png")
+    plt.show()
 
 if __name__ == '__main__':
-    
     # Run the program
+    
     test = input("Appuyez sur entrer ou n'importe quelle touche\n")
+    
     if test == "t":
         
         run_3_1()
@@ -267,22 +484,21 @@ if __name__ == '__main__':
         elif user_select == '2.3':
             run_2_3()
         elif user_select == '3.1':
-            pass
+            run_3_1()
         elif user_select == '3.2':
-            pass
+            run_3_2()
         elif user_select == '3.3':
-            pass
+            run_3_3()
         elif user_select == '3.4':
-            pass
+            run_3_4()
         elif user_select == '3.5':
-            pass
+            run_3_5()
         elif user_select == '4.1':
-            pass
-        elif user_select == '4.21':
-            pass
+            run_4_1()
+        elif user_select == '4.2':
+            run_4_2()
         elif user_select == 'quit':
             quit()
-        
         else:
             print("ERREUR de saisie !!!")
         

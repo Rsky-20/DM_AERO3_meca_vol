@@ -133,8 +133,9 @@ def Cz_2(m:float, g:float, gamma:float, rho:float, S:float, V:float):#
     Returns:
         float: retourne le coefficient de portance
     """    
-    return (2 * m *g * cos(gamma))/(rho * S * V**2) #math.cos(gamma)
+    return (2 * m * g * cos(gamma)) / (rho * S * V**2) #math.cos(gamma)
 
 z_panne = 3000 #ft
 V_enr_kt = 118 #kt
 V_enr_ms = 65 #m/s
+v_conservee = 165 #m/s
