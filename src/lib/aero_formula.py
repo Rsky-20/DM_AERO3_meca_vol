@@ -6,7 +6,7 @@ Release date: 20/11/2022
 
 [Description]
 
-    Ce module a pour but de permettre d'alléger le code principale permettant une meilleur lecture générale 
+    Ce module a pour but de permettre d'alléger le code principale permettant une meilleur lecture. 
 
 
 """
@@ -129,8 +129,8 @@ def Rx_(Tu:float, m:float, g:float, Vz:float, V:float):
 
     Returns:
         float: retourne la poussée nécessaire
-    """    
-    return Tu - m * g * (Vz/V)
+    """     
+    return Tu - m * g * (Vz / V)
 
 
 def sin_gamma(Vz:float, V:float): #= Vz/V
@@ -236,29 +236,134 @@ def Cz(V:float, rho:float, S:float, m:float, g:float):
 
 # [3] VOL STABILISE EN CROISIERE
 
-def Cz_vmax(k, Tu_max, m, g, Cx0):
-    return (1 / 2 * k ) * ((Tu_max / m * g) - math.sqrt((Tu_max / m * g)**2 - 4 * k * Cx0))
+def Cz_vmax(k:float, Tu_max:float, m:float, g:float, Cx0:float):
+    """Fonction permettant de calculer Cz pour la vitesse maximum
+
+    Args:
+        k (float): le coefficient de trainée induite
+        Tu_max (float): poussée max
+        m (float): masse de l'avion
+        g (float): constante de gravité
+        Cx0 (float): le Cx0 de la polaire
+
+    Returns:
+        float: retourn la valeur de Cz à vmax
+    """    
+    return (1 / (2 * k )) * ((Tu_max / (m * g)) - math.sqrt((Tu_max / (m * g))**2 - (4 * k * Cx0)))
 
 def V_max(m:float, g:float, rho:float, S:float, Cz_vmax:float):
     """Fonction permettant de calculer les vitesses maximum
 
     Args:
-        m (float): masse
+        m (float): masse de l'avion
         g (float): constante gravité
         rho (float): masse volumique
         S (float): surface allaire
-        Cz_vmax (float): coefficient de portance
+        Cz_vmax (float): coefficient de portance maximumS
 
     Returns:
         float: retourne la valeur de la vitesse STOL
     """    
     return math.sqrt((2 * m * g) / (rho * S * Cz_vmax))
 
-if __name__ == '__main__':
+def Vdec(m:float,g:float,rho:float,S:float,Cz:float) :
+    """_summary_
+
+    Args:
+        m (float): masse de l'avion
+        g (float): constante de gravité
+        rho (float): masse volumique
+        S (float): surface allaire
+        Cz (float): coefficient de portance
+
+    Returns:
+        float: retourne la vitesse de décrochage
+    """    
+    return np.sqrt((2 * m * g) / (rho * S * Cz))
+
+def endurance(m:float, g:float, Cz:float, Cx:float) :
+    """Fonction permettant de calculer l'endurance de l'avion
+
+    Args:
+        m (float): masse de l'avion
+        g (float): constante de gravité
+        Cz (float): constante de portance
+        Cx (float): polaire de l'avion
+
+    Returns:
+        float: retourne la valeur de l'endurance
+    """    
+    return (150000 * Cz * math.log((m * g) / (2810 * g))) / (g * Cx)
+
+def radius_action(m:float, g:float, S:float, rho:float, Cz:float, Cx:float) :
+    """Fonction permettant de calculer le rayon d'action de l'avion
+
+    Args:
+        m (float): masse de l'avion
+        g (float): constante de gravité
+        S (float): surface allaire
+        rho (float): masse volumique
+        Cz (float): coefficient de portance
+        Cx (float): polaire de l'avion
+
+    Returns:
+        float: retourne la valeur du rayon d'action de l'avion
+    """    
+    return (150000 * 2 * (math.sqrt(m * g) - math.sqrt(2810 * g)))*(math.sqrt((2 * Cz) / (rho * S)))/(Cx * g)  
     
+def facteur(phi_deg:float) :
+    """Fonction permettant de calculer le facteur de charge de l'avion en fonction de l'inclinaison
+
+    Args:
+        phi_deg (float): angle virage
+
+    Returns:
+        float: retourne la valeur du facteur de charge en fonction de l'angle
+    """    
+    return 1 / math.cos(math.radians(phi_deg))
+
+def Fv(n:float, rho:float, V:float, Cx:float, S:float):
+    """Fonction permettant de calculer la poussée en fonction du virage
+
+    Args:
+        n (float): facteur de charge
+        rho (float): masse volumique
+        V (float): vitesse
+        Cx (float): polaire de l'avion
+        S (float): surface allaire
+
+    Returns:
+        float: retourne la force de poussée en fonction du virage
+    """    
+    return (1/2) * n * rho * S * V**2 * Cx
+
+def Vdec(m:float, g:float, S:float, rho:float, Cz:float) :
+    """Fonction permettant de calculer la vitesse de décrochage
+
+    Args:
+        m (float): masse de l'avion
+        g (float): constante de gravité
+        S (float): surface allaire
+        rho (float): masse volumique
+        Cz (float): coefficient de portance
+
+    Returns:
+        float: retourne la valeur de la vitesse de décrochage
+    """    
+    return np.sqrt((2* m * g)/(rho * S * Cz))
+
+def Vn(n:float,Vdec:float):
+    """Fonction permettant de calculer la vitesse en fonction du facteur de charge
+
+    Args:
+        n (float): facteur de charge
+        Vdec (float): vitesse de décrochage
+
+    Returns:
+        float: retourne la valeur de la vitesse en fonction du facteur de charge
+    """    
+    return Vdec * math.sqrt(n)
+
+if __name__ == '__main__':
     # Run the program
-    #print(atmo.__doc__) # test importation module atmo
-    #print(dt.__doc__) # test importation module dt
-    #flight_envelope()
-    #pass
     pass
