@@ -40,14 +40,6 @@ Release date: 20/11/2022
         1. La poussée requise en fonction de l’inclinaison afin de conserver la vitesse | Commande: > 4.1
         2. La vitesse de décrochage pour chaque cran de volets en fonction de l’inclinaison | Commande: > 4.2
 
-[Fonction]
-
-
-
-
-[Autres variables]:
-
-
 """
 #############################################
 # --------- Import module section --------- #
@@ -238,9 +230,6 @@ def run_3_2():
             
     rho0 = atmo.density(atmo.pressure(10000),atmo.temperature(10000))
     
-    
-
-
     V1dec = aef.Vdec(dt.mass_max,dt.g,rho0,dt.S,dt.Cz_max) 
     V2dec = aef.Vdec(dt.mass_max,dt.g,rho0,dt.S,dt.Cz_max_TO)
 
@@ -310,7 +299,6 @@ def run_3_3():
     for i in Altitude:
         T.append(atmo.temperature(i))
         P.append(atmo.pressure(i))
-
 
     for i in range(len(Altitude)):
         rho.append(atmo.density(P[i], T[i]))

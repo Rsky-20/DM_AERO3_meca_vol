@@ -8,7 +8,6 @@ Release date: 20/11/2022
 
     Ce module a pour but de permettre d'alléger le code principale permettant une meilleur lecture. 
 
-
 """
 #############################################
 # --------- Import module section --------- #
@@ -100,7 +99,7 @@ def Tu(rho:float, S:float, V:float, Cx:float, m:float, g:float, gamma:float):
     Returns:
         float: retourne la poussée utile
     """    
-    return ((1/2) * rho * S * (V**2) * Cx) + (m * g * math.sin(gamma))
+    return ((1 / 2) * rho * S * (V**2) * Cx) + (m * g * math.sin(gamma))
 
 def Rx(Tu:float, m:float, g:float, gamma:float):
     """Fonction permettant de calculer la poussée nécessaire
